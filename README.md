@@ -1,4 +1,3 @@
-Super Smash Bros Retro 2D
 Super Smash Bros Retro 2D is a fast-paced, retro-style 2D fighting game inspired by the classic Super Smash Bros series. Built using Python and Pygame, it blends nostalgic pixel art with modern gameplay mechanics, including AI bots, procedural maps, and multiplayer support.
 
 🎮 Features
