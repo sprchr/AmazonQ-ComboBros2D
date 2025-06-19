@@ -1,78 +1,79 @@
-Super Smash Bros Retro 2D is a fast-paced, retro-style 2D fighting game inspired by the classic Super Smash Bros series. Built using Python and Pygame, it blends nostalgic pixel art with modern gameplay mechanics, including AI bots, procedural maps, and multiplayer support.
+🎮 Combo Bros 2D
 
-🎮 Features
-AI-Focused Combat: Challenge dynamic AI bots with adjustable difficulty (Easy to Insane).
+Combo Bros 2D is a fast-paced, retro-style 2D fighting game inspired by Super Smash Bros. Built with Pygame, it features vibrant pixel art characters, AI opponents, procedural stages, local multiplayer, and special attacks — all crafted for an action-packed experience.
 
-Real-Time Fighting: Enjoy smooth, responsive battles with double jumps, special attacks, and knockback-based health mechanics.
+🧠 Features
+Retro Pixel Art Fighters: Choose from a roster of characters, each with unique colors, powers, and visual styles.
 
-Procedural Maps: Every match generates a unique sky-themed battlefield with randomized platforms.
+Single & Local Multiplayer: Battle against a friend or challenge AI bots with adjustable difficulty.
 
-Pixel Art Style: Custom, pixelated characters with animated sprites and visual effects.
+AI Combat: Intelligent opponents that change behavior based on difficulty (Easy to Insane).
 
-Multiplayer Support: Local 2-player mode and menu support for online multiplayer (under development).
+Special Attacks & Knockback: Use character-specific specials like Blaze’s Fire Nova or Nimbus’s Cloud Dash.
 
-Customization: Choose characters with unique stats (speed, jump power, special abilities) and play on vibrant retro backdrops.
+Procedural Sky Maps: Dynamic platform generation for unique arenas each match.
 
-Menu UI: Clean main menu with options for VS AI, VS Player, difficulty selection, and multiplayer.
+Stylized Effects: Includes custom animations, particles (fire, leaves, clouds), and screen overlays.
 
-🛠️ Controls
+Game Modes: Character selection, difficulty selection, and online multiplayer (menu interface provided).
+
+Audio Support: Background music and SFX (with graceful fallback if audio fails).
+
+🕹️ Controls
 Player 1:
-Move: A, D
+A / D: Move left/right
 
-Jump: W
+W: Jump
 
-Attack: F or N
+F / N: Attack
 
-Special: G or M
+G / M: Special attack
 
-Player 2 (non-AI):
-Move: Left Arrow, Right Arrow
+Player 2 (Local Multiplayer):
+← / →: Move left/right
 
-Jump: Up Arrow
+↑: Jump
 
-Attack: , or N
+, / N: Attack
 
-Special: . or M
+. / M: Special attack
 
-🚀 Getting Started
-Make sure you have Python 3 and Pygame installed:
+🔧 Installation
+Clone this repository:
 
-bash:
+
+
+
+git clone https://github.com/yourusername/combobros2d.git
+cd combobros2d
+Install dependencies:
+
+
+
 pip install pygame
+Run the game:
 
-Then run the game:
+
 
 python main_game.py
+Note: Game runs in full-screen. Press ESC to return to menu or quit.
 
-📂 Project Structure
-main_game.py – Main game logic and rendering
+📁 Project Structure
 
-character_select.py – Character selection screen
 
-map_generator.py – Procedural platform generator
 
-multiplayer.py – Placeholder for online mode
+📁 combobros2d/
+├── main_game.py               # Main game logic and game loop
+├── character_select.py        # Character selection menu
+├── difficulty_options.py      # Difficulty selector
+├── map_generator.py           # Sky-themed procedural map generation
+├── multiplayer.py             # Multiplayer menu (UI only)
+├── assets/                    # Audio and image files (e.g., attack.wav, jump.wav)
+🔊 Assets
+Place your .wav sound effects and .mp3 background music into the project folder:
 
-difficulty_options.py – Difficulty selection menu
+jump.wav, attack.wav, hit.wav, special.wav
 
-assets/ – (Optional) Sound and sprite files
+menu_music.mp3, battle_music.mp3
 
-🔊 Audio
-Includes jump, attack, hit, and special sounds
-
-Menu and battle music loaded dynamically (ensure .mp3 files exist or game runs silently)
-
-🧠 AI Mechanics
-AI opponents adapt to difficulty levels by adjusting:
-
-Movement speed
-
-Attack frequency
-
-Reaction time
-
-Jump intelligence
-
-📜 License
-This project is for educational and personal use. All character likenesses are fan-made parodies in pixel art form.
-
+If these are missing, the game will still run without audio.
