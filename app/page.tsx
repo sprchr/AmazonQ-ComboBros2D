@@ -48,7 +48,7 @@ const DEFAULT_KEYBINDS = {
   down: "KeyS",
   right: "KeyD",
   attack: "KeyF",
-  special: "KeyG",
+  special: "KeyR",
   emote1: "Digit1",
   emote2: "Digit2",
   emote3: "Digit3",
@@ -306,6 +306,8 @@ interface GameData {
     musicEnabled: boolean
     difficulty: string
   }
+  level: number
+  xp: number
 }
 
 interface Platform {
@@ -354,6 +356,8 @@ export default function ComboBros2D() {
       musicEnabled: true,
       difficulty: "Normal",
     },
+    level: 1,
+    xp: 0,
   })
 
   const [selectedCharacters, setSelectedCharacters] = useState<{ player1: string | null; player2: string | null }>({
@@ -1201,10 +1205,21 @@ export default function ComboBros2D() {
         const modeCoins = GAME_MODES[gameObjects.current.gameMode as keyof typeof GAME_MODES]?.coins || 50
         const wonMatch = winner !== "Draw" && winner === gameObjects.current.player1.character_data.name
 
+        const xpNeeded = 100 + (gameData.level - 1) * 50
+        let newXP = gameData.xp + 50 // for playing
+        if (wonMatch) newXP += 50 // bonus for winning
+        let newLevel = gameData.level
+        while (newXP >= xpNeeded) {
+          newXP -= xpNeeded
+          newLevel++
+        }
+
         saveGameData({
           coins: gameData.coins + (wonMatch ? modeCoins : Math.floor(modeCoins / 2)),
           totalMatches: gameData.totalMatches + 1,
           totalWins: gameData.totalWins + (wonMatch ? 1 : 0),
+          xp: newXP,
+          level: newLevel,
         })
 
         setGameState("gameOver")
@@ -1424,8 +1439,8 @@ export default function ComboBros2D() {
               </div>
 
               {/* Stats display with retro styling */}
-              <div className="flex space-x-8 mb-8 text-center">
-                <div className="bg-black border-2 border-green-400 p-4 relative">
+              <div className="flex flex-wrap justify-center gap-4 mb-8 text-center">
+                <div className="bg-black border-2 border-green-400 pt-4 pb-2 px-4 relative">
                   <div className="absolute inset-0 bg-green-400/10" />
                   <div className="relative">
                     <div className="text-3xl font-bold text-yellow-400" style={{ textShadow: "0 0 10px #ffff00" }}>
@@ -1434,7 +1449,7 @@ export default function ComboBros2D() {
                     <div className="text-sm text-green-300">COINS</div>
                   </div>
                 </div>
-                <div className="bg-black border-2 border-green-400 p-4 relative">
+                <div className="bg-black border-2 border-green-400 pt-4 pb-2 px-4 relative">
                   <div className="absolute inset-0 bg-green-400/10" />
                   <div className="relative">
                     <div className="text-3xl font-bold text-green-400" style={{ textShadow: "0 0 10px #00ff41" }}>
@@ -1443,13 +1458,37 @@ export default function ComboBros2D() {
                     <div className="text-sm text-green-300">WINS</div>
                   </div>
                 </div>
-                <div className="bg-black border-2 border-green-400 p-4 relative">
+                <div className="bg-black border-2 border-green-400 pt-4 pb-2 px-4 relative">
                   <div className="absolute inset-0 bg-green-400/10" />
                   <div className="relative">
                     <div className="text-3xl font-bold text-cyan-400" style={{ textShadow: "0 0 10px #00ffff" }}>
                       {gameData.totalMatches}
                     </div>
                     <div className="text-sm text-green-300">MATCHES</div>
+                  </div>
+                </div>
+                {/* Level stat - keep min-w-[120px] */}
+                <div className="bg-black border-2 border-yellow-400 p-4 min-w-[120px] flex flex-col items-center relative">
+                  <div className="absolute inset-0 bg-yellow-400/10" />
+                  <div className="relative flex flex-col items-center">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-2xl">⭐</span>
+                      <span className="text-2xl font-bold text-yellow-400" style={{ textShadow: "0 0 10px #ffff00" }}>
+                        {gameData.level}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-800 border-2 border-gray-600 h-3 rounded-full overflow-hidden">
+                      <div
+                        className="bg-yellow-400 h-full transition-all duration-500 rounded-full"
+                        style={{
+                          width: `${Math.min(100, Math.round((gameData.xp / (100 + (gameData.level - 1) * 50)) * 100))}%`,
+                          boxShadow: "0 0 10px #ffff00",
+                        }}
+                      />
+                    </div>
+                    <div className="text-xs text-yellow-300 mt-1">
+                      {gameData.xp} / {100 + (gameData.level - 1) * 50} XP
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1923,6 +1962,30 @@ export default function ComboBros2D() {
                     {gameData.totalMatches}
                   </div>
                   <div className="text-lg text-cyan-300">TOTAL MATCHES</div>
+                </div>
+                {/* Level stat - keep min-w-[120px] */}
+                <div className="bg-black border-2 border-yellow-400 p-4 min-w-[120px] flex flex-col items-center relative">
+                  <div className="absolute inset-0 bg-yellow-400/10" />
+                  <div className="relative flex flex-col items-center">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-2xl">⭐</span>
+                      <span className="text-2xl font-bold text-yellow-400" style={{ textShadow: "0 0 10px #ffff00" }}>
+                        {gameData.level}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-800 border-2 border-gray-600 h-3 rounded-full overflow-hidden">
+                      <div
+                        className="bg-yellow-400 h-full transition-all duration-500 rounded-full"
+                        style={{
+                          width: `${Math.min(100, Math.round((gameData.xp / (100 + (gameData.level - 1) * 50)) * 100))}%`,
+                          boxShadow: "0 0 10px #ffff00",
+                        }}
+                      />
+                    </div>
+                    <div className="text-xs text-yellow-300 mt-1">
+                      {gameData.xp} / {100 + (gameData.level - 1) * 50} XP
+                    </div>
+                  </div>
                 </div>
               </div>
 
