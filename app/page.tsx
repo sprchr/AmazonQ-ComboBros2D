@@ -2302,7 +2302,7 @@ export default function ComboBros2D() {
       <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
         {isAuthenticated && (
           <button
-            className="ml-2 px-4 py-2 bg-red-400 text-black font-bold rounded hover:bg-red-500 border-2 border-red-400 transition"
+            className="px-8 py-3 bg-black border-2 border-red-400 text-red-400 hover:bg-red-400/20 rounded transition-all duration-300 transform hover:scale-105 font-bold ml-2"
             onClick={() => {
               localStorage.removeItem("comboBros2D_isAuthenticated")
               setIsAuthenticated(false)
@@ -2318,90 +2318,105 @@ export default function ComboBros2D() {
         )}
       </div>
       {showUsernamePrompt && !isAuthenticated && (
-        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
-          <div className="bg-black border-4 border-green-400 p-8 rounded-lg shadow-xl w-full max-w-md">
-            <h2 className="text-3xl font-bold mb-4 text-green-400 text-center">
-              {authMode === "signup" ? "WELCOME TO COMBO BROS 2D!" : "LOGIN"}
-            </h2>
-            <p className="text-green-300 mb-6 text-center">
-              {authMode === "signup"
-                ? "Please create a username and password to get started:"
-                : "Enter your username and password to continue:"}
-            </p>
-            <input
-              type="text"
-              value={pendingUsername}
-              onChange={e => setPendingUsername(e.target.value)}
-              placeholder="Username"
-              className="w-full px-4 py-2 mb-4 border-2 border-green-400 bg-black text-green-400 font-mono rounded focus:outline-none focus:border-cyan-400"
-              maxLength={20}
-              autoFocus
+        <div className="min-h-screen bg-black text-green-400 overflow-hidden relative font-mono">
+          {/* Animated retro background */}
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-gradient-to-b from-green-900/10 to-black" />
+            {/* Animated scanlines */}
+            <div
+              className="absolute inset-0 opacity-20"
+              style={{
+                background: `repeating-linear-gradient(0deg, transparent, transparent 2px, #00ff41 2px, #00ff41 4px)`,
+                transform: `translateY(${(menuAnimation * 0.5) % 4}px)`,
+              }}
             />
-            <input
-              type="password"
-              value={pendingPassword}
-              onChange={e => setPendingPassword(e.target.value)}
-              placeholder="Password"
-              className="w-full px-4 py-2 mb-4 border-2 border-green-400 bg-black text-green-400 font-mono rounded focus:outline-none focus:border-cyan-400"
-              maxLength={32}
-            />
-            {authError && <div className="text-red-400 mb-2 text-center">{authError}</div>}
-            <button
-              className="w-full py-2 bg-green-400 text-black font-bold rounded hover:bg-green-500 transition mb-2"
-              disabled={!pendingUsername.trim() || !pendingPassword.trim()}
-              onClick={() => {
-                if (authMode === "signup") {
-                  // Save username and password to localStorage
-                  const newData = { ...gameData, username: pendingUsername.trim(), password: pendingPassword.trim() }
-                  setGameData(newData)
-                  localStorage.setItem("comboBros2D_gameData", JSON.stringify(newData))
-                  localStorage.setItem("comboBros2D_isAuthenticated", "true")
-                  setIsAuthenticated(true)
-                  setShowUsernamePrompt(false)
-                } else {
-                  // Login: check credentials
-                  const savedData = localStorage.getItem("comboBros2D_gameData")
-                  if (savedData) {
-                    try {
-                      const parsed = JSON.parse(savedData)
-                      if (
-                        parsed.username === pendingUsername.trim() &&
-                        parsed.password === pendingPassword.trim()
-                      ) {
-                        setGameData(parsed)
-                        localStorage.setItem("comboBros2D_isAuthenticated", "true")
-                        setIsAuthenticated(true)
-                        setShowUsernamePrompt(false)
-                        setAuthError("")
-                      } else {
-                        setAuthError("Invalid username or password.")
+          </div>
+          <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-8">
+            {/* Modal content */}
+            <div className="bg-black border-4 border-green-400 p-8 rounded-lg shadow-xl w-full max-w-md">
+              <h2 className="text-3xl font-bold mb-4 text-green-400 text-center">
+                {authMode === "signup" ? "WELCOME TO COMBO BROS 2D!" : "LOGIN"}
+              </h2>
+              <p className="text-green-300 mb-6 text-center">
+                {authMode === "signup"
+                  ? "Please create a username and password to get started:"
+                  : "Enter your username and password to continue:"}
+              </p>
+              <input
+                type="text"
+                value={pendingUsername}
+                onChange={e => setPendingUsername(e.target.value)}
+                placeholder="Username"
+                className="w-full px-4 py-2 mb-4 border-2 border-green-400 bg-black text-green-400 font-mono rounded focus:outline-none focus:border-cyan-400"
+                maxLength={20}
+                autoFocus
+              />
+              <input
+                type="password"
+                value={pendingPassword}
+                onChange={e => setPendingPassword(e.target.value)}
+                placeholder="Password"
+                className="w-full px-4 py-2 mb-4 border-2 border-green-400 bg-black text-green-400 font-mono rounded focus:outline-none focus:border-cyan-400"
+                maxLength={32}
+              />
+              {authError && <div className="text-red-400 mb-2 text-center">{authError}</div>}
+              <button
+                className="w-full py-2 bg-green-400 text-black font-bold rounded hover:bg-green-500 transition mb-2"
+                disabled={!pendingUsername.trim() || !pendingPassword.trim()}
+                onClick={() => {
+                  if (authMode === "signup") {
+                    // Save username and password to localStorage
+                    const newData = { ...gameData, username: pendingUsername.trim(), password: pendingPassword.trim() }
+                    setGameData(newData)
+                    localStorage.setItem("comboBros2D_gameData", JSON.stringify(newData))
+                    localStorage.setItem("comboBros2D_isAuthenticated", "true")
+                    setIsAuthenticated(true)
+                    setShowUsernamePrompt(false)
+                  } else {
+                    // Login: check credentials
+                    const savedData = localStorage.getItem("comboBros2D_gameData")
+                    if (savedData) {
+                      try {
+                        const parsed = JSON.parse(savedData)
+                        if (
+                          parsed.username === pendingUsername.trim() &&
+                          parsed.password === pendingPassword.trim()
+                        ) {
+                          setGameData(parsed)
+                          localStorage.setItem("comboBros2D_isAuthenticated", "true")
+                          setIsAuthenticated(true)
+                          setShowUsernamePrompt(false)
+                          setAuthError("")
+                        } else {
+                          setAuthError("Invalid username or password.")
+                        }
+                      } catch {
+                        setAuthError("Corrupted save data. Please sign up again.")
+                        setAuthMode("signup")
                       }
-                    } catch {
-                      setAuthError("Corrupted save data. Please sign up again.")
+                    } else {
+                      setAuthError("No account found. Please sign up.")
                       setAuthMode("signup")
                     }
-                  } else {
-                    setAuthError("No account found. Please sign up.")
-                    setAuthMode("signup")
                   }
-                }
-              }}
-            >
-              {authMode === "signup" ? "SIGN UP" : "LOGIN"}
-            </button>
-            {authMode === "login" && (
-              <button
-                className="w-full py-2 bg-cyan-400 text-black font-bold rounded hover:bg-cyan-500 transition"
-                onClick={() => {
-                  setAuthMode("signup")
-                  setPendingUsername("")
-                  setPendingPassword("")
-                  setAuthError("")
                 }}
               >
-                CREATE NEW ACCOUNT
+                {authMode === "signup" ? "SIGN UP" : "LOGIN"}
               </button>
-            )}
+              {authMode === "login" && (
+                <button
+                  className="w-full py-2 bg-cyan-400 text-black font-bold rounded hover:bg-cyan-500 transition"
+                  onClick={() => {
+                    setAuthMode("signup")
+                    setPendingUsername("")
+                    setPendingPassword("")
+                    setAuthError("")
+                  }}
+                >
+                  CREATE NEW ACCOUNT
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}
