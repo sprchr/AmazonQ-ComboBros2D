@@ -1708,16 +1708,10 @@ export default function ComboBros2D() {
                 <button
                   onClick={() => {
                     if (selectedCharacters.player1) {
-                      if (gameData.gameMode === "online") {
-                        // For online, trigger online matchmaking
-                        startOnlineGame()
-                      } else {
-                        // Auto-select AI character for other modes
-                        const availableChars = gameData.unlockedCharacters.filter((k) => k !== selectedCharacters.player1)
-                        const aiChar = availableChars[Math.floor(Math.random() * availableChars.length)]
-                        setSelectedCharacters((prev) => ({ ...prev, player2: aiChar }))
-                        startGame()
-                      }
+                      const availableChars = gameData.unlockedCharacters.filter((k) => k !== selectedCharacters.player1)
+                      const aiChar = availableChars[Math.floor(Math.random() * availableChars.length)]
+                      setSelectedCharacters((prev) => ({ ...prev, player2: aiChar }))
+                      startGame()
                     }
                   }}
                   disabled={!selectedCharacters.player1}
