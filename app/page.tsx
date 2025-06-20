@@ -2,6 +2,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { socket } from "@/lib/socket"
 
 // Game constants
 const SCREEN_WIDTH = 1200
@@ -56,6 +57,12 @@ const DEFAULT_KEYBINDS = {
 
 // Game modes
 const GAME_MODES = {
+  online: {
+    name: "ONLINE",
+    description: "Play against real players online",
+    coins: 100,
+    icon: "🌐",
+  },
   classic: {
     name: "CLASSIC",
     description: "Traditional 1v1 fighting",
@@ -2330,6 +2337,7 @@ export default function ComboBros2D() {
   const [authMode, setAuthMode] = useState<'signup' | 'login'>("signup")
   const [authError, setAuthError] = useState("")
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [onlineStatus, setOnlineStatus] = useState<"idle" | "waiting" | "matched" | "error">("idle")
 
   // On mount, check if user is authenticated
   useEffect(() => {
