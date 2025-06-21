@@ -2766,6 +2766,41 @@ export default function ComboBros2D() {
     }
   }, [showMobileWarning, mobileCountdown]);
 
+  const [orientation, setOrientation] = useState(
+    typeof window !== 'undefined' && window.innerWidth > window.innerHeight ? 'landscape' : 'portrait'
+  );
+  const [showOrientationWarning, setShowOrientationWarning] = useState(false);
+  const [orientationCountdown, setOrientationCountdown] = useState(5);
+
+  // Orientation detection
+  useEffect(() => {
+    function handleOrientationChange() {
+      const newOrientation = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
+      setOrientation(newOrientation);
+      if (newOrientation === 'portrait') {
+        setShowOrientationWarning(true);
+        setOrientationCountdown(5);
+      }
+    }
+    window.addEventListener('resize', handleOrientationChange);
+    window.addEventListener('orientationchange', handleOrientationChange);
+    handleOrientationChange();
+    return () => {
+      window.removeEventListener('resize', handleOrientationChange);
+      window.removeEventListener('orientationchange', handleOrientationChange);
+    };
+  }, []);
+
+  // Orientation warning countdown
+  useEffect(() => {
+    if (showOrientationWarning && orientation === 'portrait' && orientationCountdown > 0) {
+      const timer = setTimeout(() => setOrientationCountdown((c) => c - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (orientationCountdown === 0) {
+      setShowOrientationWarning(false);
+    }
+  }, [showOrientationWarning, orientation, orientationCountdown]);
+
   return (
     <div className="w-full h-screen">
       {/* Mobile warning message */}
@@ -2789,6 +2824,28 @@ export default function ComboBros2D() {
         }}>
           <span>Mobile Mode Detected: For best experience, use on-screen controls or rotate your device.</span>
           <span style={{fontWeight:'bold', fontSize:18}}>{mobileCountdown}</span>
+        </div>
+      )}
+      {showOrientationWarning && orientation === 'portrait' && (
+        <div style={{
+          position: 'fixed',
+          top: 16,
+          right: 16,
+          zIndex: 1001,
+          background: 'rgba(0,0,0,0.85)',
+          color: '#FFD700',
+          padding: '16px 24px',
+          borderRadius: 8,
+          fontFamily: 'monospace',
+          fontSize: 16,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+          border: '2px solid #FFD700',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+        }}>
+          <span>For best experience, rotate your device to landscape.</span>
+          <span style={{fontWeight:'bold', fontSize:18}}>{orientationCountdown}</span>
         </div>
       )}
       <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
