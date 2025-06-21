@@ -94,6 +94,12 @@ const GAME_MODES = {
     coins: 10,
     icon: "🎯",
   },
+  console: {
+    name: "CONSOLE",
+    description: "Play with a gamepad or console-style controls",
+    coins: 80,
+    icon: "🎮",
+  },
 }
 
 // Enhanced character definitions with unlock requirements
@@ -2207,13 +2213,29 @@ export default function ComboBros2D() {
                 </div>
               </div>
 
-              <div className="text-center mt-8">
+              <div className="text-center mt-8 flex flex-col items-center gap-4">
                 <button
                   onClick={() => setGameState("menu")}
                   className="px-8 py-3 bg-black border-2 border-green-400 text-green-400 hover:bg-green-400/20 transition-colors"
                 >
                   &lt; BACK TO MENU
                 </button>
+                {isAuthenticated && (
+                  <button
+                    className="px-8 py-3 bg-black border-2 border-red-400 text-red-400 hover:bg-red-400/20 rounded transition-all duration-300 transform hover:scale-105 font-bold mt-4"
+                    onClick={() => {
+                      localStorage.removeItem("comboBros2D_isAuthenticated")
+                      setIsAuthenticated(false)
+                      setShowUsernamePrompt(true)
+                      setAuthMode("login")
+                      setPendingUsername("")
+                      setPendingPassword("")
+                      setAuthError("")
+                    }}
+                  >
+                    LOGOUT
+                  </button>
+                )}
               </div>
             </div>
           </div>
