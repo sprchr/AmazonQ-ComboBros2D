@@ -1,7 +1,7 @@
 // @ts-nocheck
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
 import { socket } from "@/lib/socket"
 import { useIsMobile } from "../hooks/use-mobile"
 
@@ -2620,6 +2620,131 @@ export default function ComboBros2D() {
     if (!mobileButtons.special) keysPressed.current.delete(gameData.keybinds.special);
   }, [joystick, mobileButtons, isMobile, gameData.keybinds]);
 
+  // Add gamepad state
+  const [gamepadConnected, setGamepadConnected] = useState(false);
+  const [gamepadMapping, setGamepadMapping] = useState({
+    up: 12, // D-pad up
+    down: 13, // D-pad down
+    left: 14, // D-pad left
+    right: 15, // D-pad right
+    attack: 0, // A
+    special: 1, // B
+    emote1: 2, // X
+    emote2: 3, // Y
+    emote3: 9, // Start
+  });
+  const [remappingAction, setRemappingAction] = useState<string | null>(null);
+
+  // Gamepad detection and input
+  useEffect(() => {
+    const handleGamepadConnected = () => setGamepadConnected(true);
+    const handleGamepadDisconnected = () => setGamepadConnected(false);
+    window.addEventListener("gamepadconnected", handleGamepadConnected);
+    window.addEventListener("gamepaddisconnected", handleGamepadDisconnected);
+    // Initial check
+    if (navigator.getGamepads && Array.from(navigator.getGamepads()).some(gp => gp)) {
+      setGamepadConnected(true);
+    }
+    return () => {
+      window.removeEventListener("gamepadconnected", handleGamepadConnected);
+      window.removeEventListener("gamepaddisconnected", handleGamepadDisconnected);
+    };
+  }, []);
+
+  // Gamepad polling and input injection
+  useEffect(() => {
+    let animation: number;
+    function pollGamepad() {
+      const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+      const gp = pads[0];
+      if (gp && gamepadConnected && gameData.gameMode === "console" && !remappingAction) {
+        // Movement
+        if (gp.buttons[gamepadMapping.left]?.pressed) keysPressed.current.add(gameData.keybinds.left);
+        else keysPressed.current.delete(gameData.keybinds.left);
+        if (gp.buttons[gamepadMapping.right]?.pressed) keysPressed.current.add(gameData.keybinds.right);
+        else keysPressed.current.delete(gameData.keybinds.right);
+        if (gp.buttons[gamepadMapping.up]?.pressed) keysPressed.current.add(gameData.keybinds.up);
+        else keysPressed.current.delete(gameData.keybinds.up);
+        if (gp.buttons[gamepadMapping.down]?.pressed) keysPressed.current.add(gameData.keybinds.down);
+        else keysPressed.current.delete(gameData.keybinds.down);
+        // Actions
+        if (gp.buttons[gamepadMapping.attack]?.pressed) keysPressed.current.add(gameData.keybinds.attack);
+        else keysPressed.current.delete(gameData.keybinds.attack);
+        if (gp.buttons[gamepadMapping.special]?.pressed) keysPressed.current.add(gameData.keybinds.special);
+        else keysPressed.current.delete(gameData.keybinds.special);
+        if (gp.buttons[gamepadMapping.emote1]?.pressed) keysPressed.current.add(gameData.keybinds.emote1);
+        else keysPressed.current.delete(gameData.keybinds.emote1);
+        if (gp.buttons[gamepadMapping.emote2]?.pressed) keysPressed.current.add(gameData.keybinds.emote2);
+        else keysPressed.current.delete(gameData.keybinds.emote2);
+        if (gp.buttons[gamepadMapping.emote3]?.pressed) keysPressed.current.add(gameData.keybinds.emote3);
+        else keysPressed.current.delete(gameData.keybinds.emote3);
+      }
+      animation = requestAnimationFrame(pollGamepad);
+    }
+    if (gamepadConnected) pollGamepad();
+    return () => cancelAnimationFrame(animation);
+  }, [gamepadConnected, gamepadMapping, gameData.keybinds, gameData.gameMode, remappingAction]);
+
+  // Gamepad remapping handler
+  const handleRemapGamepad = useCallback((action: string) => {
+    setRemappingAction(action);
+    const listener = (e: GamepadEvent) => {
+      const gp = e.gamepad;
+      if (!gp) return;
+      setRemappingAction(null);
+    };
+    window.addEventListener("gamepadbuttondown", listener, { once: true });
+  }, []);
+
+  // Gamepad UI hints (show in game and settings if gamepad is connected)
+  // ... existing code ...
+  // In the settings screen, add a section for gamepad remapping if gamepadConnected and Console mode is selected
+  {gamepadConnected && gameData.gameMode === "console" && (
+    <div className="bg-black border-2 border-cyan-400 p-6 mt-6">
+      <h3 className="text-2xl font-bold mb-4 text-cyan-400 flex items-center gap-2">
+        <span>GAMEPAD CONTROLS</span>
+        <span className="text-3xl">🎮</span>
+        <span className={`ml-2 text-sm font-mono ${gamepadConnected ? 'text-green-400' : 'text-red-400'}`}>{gamepadConnected ? 'CONNECTED' : 'DISCONNECTED'}</span>
+      </h3>
+      <div className="space-y-4">
+        {Object.entries(gamepadMapping).map(([action, btnIdx]) => (
+          <div key={action} className="flex items-center justify-between">
+            <span className="text-lg text-green-300">{action.toUpperCase()}</span>
+            <button
+              className={`px-4 py-2 border-2 border-cyan-400 bg-black text-cyan-400 font-mono rounded focus:outline-none focus:border-yellow-400 ${remappingAction === action ? 'animate-pulse' : ''}`}
+              onClick={() => setRemappingAction(action)}
+              disabled={!!remappingAction}
+            >
+              {remappingAction === action ? 'PRESS BUTTON...' : `Button ${btnIdx}`}
+            </button>
+          </div>
+        ))}
+        {remappingAction && (
+          <div className="text-yellow-400 mt-2">Press a button on your gamepad to assign to {remappingAction.toUpperCase()}...</div>
+        )}
+      </div>
+    </div>
+  )}
+  // ... existing code ...
+  // In the game UI, show a gamepad icon and hint if gamepadConnected and Console mode
+  {gamepadConnected && gameData.gameMode === "console" && (
+    <div className="fixed top-4 left-4 z-50 flex items-center gap-2 bg-black bg-opacity-80 border-2 border-cyan-400 px-4 py-2 rounded-lg text-cyan-400 font-mono text-lg shadow-lg">
+      <span className="text-2xl">🎮</span>
+      <span>Gamepad Connected</span>
+    </div>
+  )}
+  // ... existing code ...
+
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  // Show tutorial on first login/signup
+  useEffect(() => {
+    if (isAuthenticated && !localStorage.getItem("comboBros2D_tutorialShown")) {
+      setShowTutorial(true);
+      localStorage.setItem("comboBros2D_tutorialShown", "true");
+    }
+  }, [isAuthenticated]);
+
   if (isMobile) {
     return (
       <div style={{
@@ -2768,6 +2893,31 @@ export default function ComboBros2D() {
                 </button>
               )}
             </div>
+          </div>
+        </div>
+      )}
+      {showTutorial && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90">
+          <div className="bg-black border-4 border-cyan-400 rounded-lg shadow-2xl p-8 max-w-lg w-full text-center font-mono text-green-400 relative">
+            <h2 className="text-4xl font-bold mb-4 text-cyan-400" style={{textShadow:'0 0 16px #00ffff'}}>HOW TO PLAY</h2>
+            <div className="mb-6 space-y-4 text-lg">
+              <div>
+                <span className="text-yellow-400">Desktop:</span> Use <b>WASD</b> or <b>Arrow Keys</b> to move/jump, <b>F</b> to attack, <b>R</b> for special, <b>1/2/3</b> for emotes.
+              </div>
+              <div>
+                <span className="text-yellow-400">Mobile:</span> Use the on-screen <b>joystick</b> and <b>buttons</b> to move, jump, attack, and use special.
+              </div>
+              <div>
+                <span className="text-yellow-400">Console:</span> Use your <b>gamepad</b> (D-pad/left stick to move, A/B/X/Y for actions). You can remap buttons in Settings.
+              </div>
+              <div className="text-cyan-400 text-base mt-2">You can change controls in Settings at any time!</div>
+            </div>
+            <button
+              className="mt-4 px-8 py-3 bg-cyan-400 text-black font-bold rounded hover:bg-cyan-500 transition border-2 border-cyan-400 text-xl"
+              onClick={() => setShowTutorial(false)}
+            >
+              START PLAYING
+            </button>
           </div>
         </div>
       )}
