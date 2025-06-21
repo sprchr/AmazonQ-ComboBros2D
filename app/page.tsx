@@ -2766,31 +2766,6 @@ export default function ComboBros2D() {
     }
   }, [showMobileWarning, mobileCountdown]);
 
-  if (isMobile) {
-    return (
-      <div style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: COLORS.retro.bg,
-        color: COLORS.retro.text,
-        fontFamily: 'monospace',
-        padding: 32,
-        textAlign: 'center',
-      }}>
-        <h1 style={{ fontSize: 32, marginBottom: 16 }}>Mobile Mode Detected</h1>
-        <p style={{ fontSize: 20, marginBottom: 24 }}>
-          You are playing on a mobile device.<br/>
-          For the best experience, use on-screen controls or rotate your device.<br/>
-          (If you encounter issues, try playing on desktop.)
-        </p>
-        {/* Optionally, add mobile-specific controls or instructions here */}
-      </div>
-    );
-  }
-
   return (
     <div className="w-full h-screen">
       {/* Mobile warning message */}
