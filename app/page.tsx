@@ -2745,6 +2745,27 @@ export default function ComboBros2D() {
     }
   }, [isAuthenticated]);
 
+  const [showMobileWarning, setShowMobileWarning] = useState(false);
+  const [mobileCountdown, setMobileCountdown] = useState(5);
+
+  // Show mobile warning on mount if mobile
+  useEffect(() => {
+    if (isMobile) {
+      setShowMobileWarning(true);
+      setMobileCountdown(5);
+    }
+  }, [isMobile]);
+
+  // Countdown effect
+  useEffect(() => {
+    if (showMobileWarning && mobileCountdown > 0) {
+      const timer = setTimeout(() => setMobileCountdown((c) => c - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (mobileCountdown === 0) {
+      setShowMobileWarning(false);
+    }
+  }, [showMobileWarning, mobileCountdown]);
+
   if (isMobile) {
     return (
       <div style={{
@@ -2772,6 +2793,29 @@ export default function ComboBros2D() {
 
   return (
     <div className="w-full h-screen">
+      {/* Mobile warning message */}
+      {showMobileWarning && (
+        <div style={{
+          position: 'fixed',
+          top: 16,
+          left: 16,
+          zIndex: 1000,
+          background: 'rgba(0,0,0,0.85)',
+          color: '#FFD700',
+          padding: '16px 24px',
+          borderRadius: 8,
+          fontFamily: 'monospace',
+          fontSize: 16,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+          border: '2px solid #FFD700',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+        }}>
+          <span>Mobile Mode Detected: For best experience, use on-screen controls or rotate your device.</span>
+          <span style={{fontWeight:'bold', fontSize:18}}>{mobileCountdown}</span>
+        </div>
+      )}
       <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
         {isAuthenticated && (
           <button
