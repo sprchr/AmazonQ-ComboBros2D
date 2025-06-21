@@ -2070,20 +2070,20 @@ export default function ComboBros2D() {
                 <div className="bg-black border-2 border-green-400 p-6">
                   <h3 className="text-2xl font-bold mb-4 text-green-400">DIFFICULTY</h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {["Easy", "Normal", "Hard", "Insane"].map((diff) => (
+                    {['Easy', 'Normal', 'Hard', 'Insane'].map((diff) => (
                       <button
                         key={diff}
                         onClick={() => saveGameData({ settings: { ...gameData.settings, difficulty: diff } })}
                         className={`px-4 py-2 border-2 transition-all duration-300 ${
                           gameData.settings.difficulty === diff
-                            ? diff === "Easy"
-                              ? "border-green-400 bg-green-400/20 text-green-400"
-                              : diff === "Normal"
-                                ? "border-cyan-400 bg-cyan-400/20 text-cyan-400"
-                                : diff === "Hard"
-                                  ? "border-yellow-400 bg-yellow-400/20 text-yellow-400"
-                                  : "border-red-400 bg-red-400/20 text-red-400"
-                            : "border-gray-600 bg-black text-gray-400 hover:border-green-400 hover:text-green-400"
+                            ? diff === 'Easy'
+                              ? 'border-green-400 bg-green-400/20 text-green-400'
+                              : diff === 'Normal'
+                              ? 'border-cyan-400 bg-cyan-400/20 text-cyan-400'
+                              : diff === 'Hard'
+                              ? 'border-yellow-400 bg-yellow-400/20 text-yellow-400'
+                              : 'border-red-400 bg-red-400/20 text-red-400'
+                            : 'border-gray-600 bg-black text-gray-400 hover:border-green-400 hover:text-green-400'
                         }`}
                       >
                         {diff.toUpperCase()}
@@ -2106,11 +2106,11 @@ export default function ComboBros2D() {
                         }
                         className={`px-4 py-2 border-2 transition-all duration-300 ${
                           gameData.settings.soundEnabled
-                            ? "border-green-400 bg-green-400/20 text-green-400"
-                            : "border-red-400 bg-red-400/20 text-red-400"
+                            ? 'border-green-400 bg-green-400/20 text-green-400'
+                            : 'border-red-400 bg-red-400/20 text-red-400'
                         }`}
                       >
-                        {gameData.settings.soundEnabled ? "ON" : "OFF"}
+                        {gameData.settings.soundEnabled ? 'ON' : 'OFF'}
                       </button>
                     </div>
                     <div className="flex items-center justify-between">
@@ -2123,11 +2123,11 @@ export default function ComboBros2D() {
                         }
                         className={`px-4 py-2 border-2 transition-all duration-300 ${
                           gameData.settings.musicEnabled
-                            ? "border-green-400 bg-green-400/20 text-green-400"
-                            : "border-red-400 bg-red-400/20 text-red-400"
+                            ? 'border-green-400 bg-green-400/20 text-green-400'
+                            : 'border-red-400 bg-red-400/20 text-red-400'
                         }`}
                       >
-                        {gameData.settings.musicEnabled ? "ON" : "OFF"}
+                        {gameData.settings.musicEnabled ? 'ON' : 'OFF'}
                       </button>
                     </div>
                   </div>
@@ -2143,6 +2143,51 @@ export default function ComboBros2D() {
                     CONFIGURE CONTROLS
                   </button>
                 </div>
+
+                {/* Mobile Controls Customization */}
+                {isMobile && (
+                  <div className="bg-black border-2 border-yellow-400 p-6">
+                    <h3 className="text-2xl font-bold mb-4 text-yellow-400">MOBILE CONTROLS</h3>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-lg text-green-300">JUMP BUTTON</span>
+                        <select
+                          value={gameData.keybinds.up}
+                          onChange={e => saveGameData({ keybinds: { ...gameData.keybinds, up: e.target.value } })}
+                          className="px-4 py-2 border-2 border-yellow-400 bg-black text-yellow-400 font-mono rounded focus:outline-none focus:border-cyan-400"
+                        >
+                          <option value="KeyW">W</option>
+                          <option value="ArrowUp">↑</option>
+                          <option value="Space">SPACE</option>
+                        </select>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-lg text-green-300">ATTACK BUTTON</span>
+                        <select
+                          value={gameData.keybinds.attack}
+                          onChange={e => saveGameData({ keybinds: { ...gameData.keybinds, attack: e.target.value } })}
+                          className="px-4 py-2 border-2 border-yellow-400 bg-black text-yellow-400 font-mono rounded focus:outline-none focus:border-cyan-400"
+                        >
+                          <option value="KeyF">F</option>
+                          <option value="KeyG">G</option>
+                          <option value="Space">SPACE</option>
+                        </select>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-lg text-green-300">SPECIAL BUTTON</span>
+                        <select
+                          value={gameData.keybinds.special}
+                          onChange={e => saveGameData({ keybinds: { ...gameData.keybinds, special: e.target.value } })}
+                          className="px-4 py-2 border-2 border-yellow-400 bg-black text-yellow-400 font-mono rounded focus:outline-none focus:border-cyan-400"
+                        >
+                          <option value="KeyR">R</option>
+                          <option value="KeyG">G</option>
+                          <option value="Space">SPACE</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Reset data */}
                 <div className="bg-black border-2 border-red-400 p-6">
@@ -2261,18 +2306,127 @@ export default function ComboBros2D() {
               <p className="text-lg font-bold mb-2 text-green-400">► CONTROLS</p>
               <p className="text-sm">
                 {getKeyName(gameData.keybinds.up)}/{getKeyName(gameData.keybinds.left)}/
-                {getKeyName(gameData.keybinds.down)}/{getKeyName(gameData.keybinds.right)} - MOVE/JUMP |{" "}
-                {getKeyName(gameData.keybinds.attack)} - ATTACK | {getKeyName(gameData.keybinds.special)} - SPECIAL
+                {getKeyName(gameData.keybinds.down)}/{getKeyName(gameData.keybinds.right)} - MOVE/JUMP | {getKeyName(gameData.keybinds.attack)} - ATTACK | {getKeyName(gameData.keybinds.special)} - SPECIAL
               </p>
               <p className="text-sm">
                 {getKeyName(gameData.keybinds.emote1)}/{getKeyName(gameData.keybinds.emote2)}/
                 {getKeyName(gameData.keybinds.emote3)} - EMOTES | ESC - RETURN TO MENU
               </p>
               <div className="mt-2 text-cyan-400">
-                MODE: {GAME_MODES[gameData.gameMode as keyof typeof GAME_MODES]?.name} | DIFFICULTY:{" "}
-                {gameData.settings.difficulty.toUpperCase()}
+                MODE: {GAME_MODES[gameData.gameMode as keyof typeof GAME_MODES]?.name} | DIFFICULTY: {gameData.settings.difficulty.toUpperCase()}
               </div>
             </div>
+            {isMobile && (
+              <>
+                {/* Joystick (bottom left) */}
+                <div
+                  ref={joystickRef}
+                  style={{
+                    position: "fixed",
+                    left: 24,
+                    bottom: 24,
+                    width: 120,
+                    height: 120,
+                    zIndex: 50,
+                    touchAction: "none",
+                    background: "#1118",
+                    borderRadius: 60,
+                    border: "2px solid #00ff41",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow: "0 0 16px #00ff41",
+                  }}
+                  onTouchStart={handleJoystickStart}
+                  onTouchMove={handleJoystickMove}
+                  onTouchEnd={handleJoystickEnd}
+                  onTouchCancel={handleJoystickEnd}
+                >
+                  <div
+                    style={{
+                      width: 40,
+                      height: 40,
+                      background: "#00ff41cc",
+                      borderRadius: 20,
+                      transform: `translate(${joystick.dx}px,${joystick.dy}px)`,
+                      transition: joystick.active ? "none" : "transform 0.2s",
+                      boxShadow: "0 0 8px #00ff41",
+                      border: "2px solid #fff",
+                    }}
+                  />
+                </div>
+                {/* Buttons (bottom right) */}
+                <div
+                  style={{
+                    position: "fixed",
+                    right: 24,
+                    bottom: 24,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 16,
+                    zIndex: 50,
+                    alignItems: "flex-end",
+                  }}
+                >
+                  <button
+                    style={{
+                      width: 64,
+                      height: 64,
+                      background: "#00ffffcc",
+                      borderRadius: 32,
+                      border: "2px solid #00ff41",
+                      color: "#000",
+                      fontSize: 20,
+                      fontWeight: "bold",
+                      marginBottom: 8,
+                      boxShadow: "0 0 8px #00ffff",
+                    }}
+                    onTouchStart={() => handleMobileButton("jump", true)}
+                    onTouchEnd={() => handleMobileButton("jump", false)}
+                    onTouchCancel={() => handleMobileButton("jump", false)}
+                  >
+                    JUMP
+                  </button>
+                  <button
+                    style={{
+                      width: 64,
+                      height: 64,
+                      background: "#ff0080cc",
+                      borderRadius: 32,
+                      border: "2px solid #00ff41",
+                      color: "#fff",
+                      fontSize: 20,
+                      fontWeight: "bold",
+                      marginBottom: 8,
+                      boxShadow: "0 0 8px #ff0080",
+                    }}
+                    onTouchStart={() => handleMobileButton("attack", true)}
+                    onTouchEnd={() => handleMobileButton("attack", false)}
+                    onTouchCancel={() => handleMobileButton("attack", false)}
+                  >
+                    ATK
+                  </button>
+                  <button
+                    style={{
+                      width: 64,
+                      height: 64,
+                      background: "#ffff00cc",
+                      borderRadius: 32,
+                      border: "2px solid #00ff41",
+                      color: "#000",
+                      fontSize: 20,
+                      fontWeight: "bold",
+                      boxShadow: "0 0 8px #ffff00",
+                    }}
+                    onTouchStart={() => handleMobileButton("special", true)}
+                    onTouchEnd={() => handleMobileButton("special", false)}
+                    onTouchCancel={() => handleMobileButton("special", false)}
+                  >
+                    SP
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         )
 
@@ -2378,6 +2532,71 @@ export default function ComboBros2D() {
   }, [])
 
   const isMobile = useIsMobile();
+
+  // Mobile controls state
+  const [joystick, setJoystick] = useState({ active: false, x: 0, y: 0, dx: 0, dy: 0 });
+  const [mobileButtons, setMobileButtons] = useState({ jump: false, attack: false, special: false });
+  const joystickRef = useRef<HTMLDivElement>(null);
+
+  // Handle joystick touch events
+  const handleJoystickStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    const rect = joystickRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setJoystick({
+      active: true,
+      x: touch.clientX - rect.left,
+      y: touch.clientY - rect.top,
+      dx: 0,
+      dy: 0,
+    });
+  };
+  const handleJoystickMove = (e: React.TouchEvent) => {
+    if (!joystick.active) return;
+    const touch = e.touches[0];
+    const rect = joystickRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const dx = touch.clientX - rect.left - joystick.x;
+    const dy = touch.clientY - rect.top - joystick.y;
+    setJoystick((j) => ({ ...j, dx, dy }));
+  };
+  const handleJoystickEnd = () => {
+    setJoystick({ active: false, x: 0, y: 0, dx: 0, dy: 0 });
+  };
+
+  // Handle mobile button presses
+  const handleMobileButton = (btn: "jump" | "attack" | "special", pressed: boolean) => {
+    setMobileButtons((b) => ({ ...b, [btn]: pressed }));
+  };
+
+  // Inject mobile input into keysPressed
+  useEffect(() => {
+    if (!isMobile) return;
+    // Joystick directions
+    const threshold = 20; // px
+    if (joystick.active) {
+      if (joystick.dy < -threshold) keysPressed.current.add(gameData.keybinds.up);
+      else keysPressed.current.delete(gameData.keybinds.up);
+      if (joystick.dy > threshold) keysPressed.current.add(gameData.keybinds.down);
+      else keysPressed.current.delete(gameData.keybinds.down);
+      if (joystick.dx < -threshold) keysPressed.current.add(gameData.keybinds.left);
+      else keysPressed.current.delete(gameData.keybinds.left);
+      if (joystick.dx > threshold) keysPressed.current.add(gameData.keybinds.right);
+      else keysPressed.current.delete(gameData.keybinds.right);
+    } else {
+      keysPressed.current.delete(gameData.keybinds.up);
+      keysPressed.current.delete(gameData.keybinds.down);
+      keysPressed.current.delete(gameData.keybinds.left);
+      keysPressed.current.delete(gameData.keybinds.right);
+    }
+    // Buttons
+    if (mobileButtons.jump) keysPressed.current.add(gameData.keybinds.up);
+    if (!mobileButtons.jump) keysPressed.current.delete(gameData.keybinds.up);
+    if (mobileButtons.attack) keysPressed.current.add(gameData.keybinds.attack);
+    if (!mobileButtons.attack) keysPressed.current.delete(gameData.keybinds.attack);
+    if (mobileButtons.special) keysPressed.current.add(gameData.keybinds.special);
+    if (!mobileButtons.special) keysPressed.current.delete(gameData.keybinds.special);
+  }, [joystick, mobileButtons, isMobile, gameData.keybinds]);
 
   if (isMobile) {
     return (
