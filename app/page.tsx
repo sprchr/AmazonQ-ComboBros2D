@@ -3,6 +3,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { socket } from "@/lib/socket"
+import { useIsMobile } from "../hooks/use-mobile"
 
 // Game constants
 const SCREEN_WIDTH = 1200
@@ -2338,6 +2339,14 @@ export default function ComboBros2D() {
   const [authError, setAuthError] = useState("")
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [onlineStatus, setOnlineStatus] = useState<"idle" | "waiting" | "matched" | "error">("idle")
+  // Add onlinePlayers state
+  const [onlinePlayers, setOnlinePlayers] = useState<number>(0)
+
+  // Listen for online player count from server
+  useEffect(() => {
+    socket.on("onlinePlayers", (count: number) => setOnlinePlayers(count))
+    return () => socket.off("onlinePlayers")
+  }, [])
 
   // On mount, check if user is authenticated
   useEffect(() => {
@@ -2368,6 +2377,33 @@ export default function ComboBros2D() {
     }
   }, [])
 
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: COLORS.retro.bg,
+        color: COLORS.retro.text,
+        fontFamily: 'monospace',
+        padding: 32,
+        textAlign: 'center',
+      }}>
+        <h1 style={{ fontSize: 32, marginBottom: 16 }}>Mobile Mode Detected</h1>
+        <p style={{ fontSize: 20, marginBottom: 24 }}>
+          You are playing on a mobile device.<br/>
+          For the best experience, use on-screen controls or rotate your device.<br/>
+          (If you encounter issues, try playing on desktop.)
+        </p>
+        {/* Optionally, add mobile-specific controls or instructions here */}
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-screen">
       <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
@@ -2387,6 +2423,9 @@ export default function ComboBros2D() {
             LOGOUT
           </button>
         )}
+      </div>
+      <div className="fixed top-4 right-4 z-50 bg-black bg-opacity-80 border-2 border-cyan-400 px-6 py-2 rounded-lg text-cyan-400 font-mono text-lg shadow-lg">
+        ONLINE: {onlinePlayers}
       </div>
       {showUsernamePrompt && !isAuthenticated && (
         <div className="min-h-screen bg-black text-green-400 overflow-hidden relative font-mono">
